@@ -1,6 +1,28 @@
 import Head from "next/head";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+    const initialPizzas = [];
+    const resultFromUseState = useState(initialPizzas);
+    const pizzasFromState = resultFromUseState[0];
+    const setPizzas = resultFromUseState[1];
+
+    useEffect(() => {
+        fetch("/api/pizzas")
+            .then((data) => {
+                return data.json();
+            })
+            .then((response) => {
+                setPizzas(response.pizzas);
+            });
+    }, [pizzasFromState, setPizzas]);
+
+    function Pizzas() {
+        return pizzasFromState.map((pizza, index) => {
+            return <div key={index}>{pizza.name}</div>;
+        });
+    }
+
     return (
         <>
             <Head>
@@ -15,7 +37,9 @@ export default function Home() {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <main></main>
+            <main>
+                <Pizzas />
+            </main>
         </>
     );
 }
